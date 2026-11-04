@@ -1,5 +1,5 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8">
-<title>Le Bunker v0.26</title>
+<title>Le Bunker v0.28</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <style>
 :root{color-scheme:dark;--glass:rgba(8,13,20,.74);--line:rgba(120,170,230,.2);--ink:#e6edf5;--dim:#8ea0b4;--amber:#ffb340;--sl:max(16px,env(safe-area-inset-left,0px));--st:max(12px,env(safe-area-inset-top,0px));--sb:max(12px,env(safe-area-inset-bottom,0px))}
@@ -18,7 +18,7 @@ canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-actio
 .chip{border:1px solid var(--line);background:none;border-radius:6px;padding:9px 14px;color:var(--ink);font:600 14px system-ui}
 </style></head><body>
 <canvas id="c" tabindex="0"></canvas>
-<div id="top" class="gl"><h1>Le <span>Bunker</span></h1><div id="lieu">Sas d’entrée</div><div id="ver" style="font:500 11px system-ui;color:var(--dim)">v0.26</div></div>
+<div id="top" class="gl"><h1>Le <span>Bunker</span></h1><div id="lieu">Sas d’entrée</div><div id="ver" style="font:500 11px system-ui;color:var(--dim)">v0.28</div></div>
 <div id="aide" class="gl">Glisser : regarder · ZQSD / flèches : avancer · Maj : courir · tactile : pouce gauche = avancer</div>
 <div id="stick" hidden><i></i></div>
 <div id="msg" hidden><div><h2>WebGL 2 indisponible</h2><p id="msgt">Ce navigateur ne fournit pas de contexte WebGL 2. Essayez Safari 16+, Chrome, Edge ou Firefox à jour.</p><button id="msgb" class="chip" hidden>Recharger</button></div></div>
@@ -6084,8 +6084,9 @@ A.onUpdate(dt0 => { const dt = Math.min(dt0 || .016, .05); if (!C.ch) { if (!NY.
   // le temps a sauté (sommeil) : on la remet à sa place
   if (Math.abs(FA.t - C.tPrev) > 20) { const a = actuel(); if (a !== C.lieu) poser(a, true); } C.tPrev = FA.t;
   const a = actuel(); if (a !== C.lieu && !C.dlg && !(D && D.ouvert)) poser(a, false);
-  if (C.dlg) { const ang = angleVers(W.x - ch.pos[0], W.z - ch.pos[2]); if (C.etat === 'pose' && C.lieu && C.lieu.clip !== 'Sleep_Lie') ch.yaw += difAngle(ang, ch.yaw) * Math.min(1, dt * 4); if (!(D && D.ouvert)) { C.dlg = false; } }
-  else if (C.etat === 'marche') marche(dt, dP); else if (C.etat === 'pose') { ch.player.rate = 1; if (C.lieu) { if (dP < 3 && C.lieu.clip !== 'Sleep_Lie') ch.yaw += difAngle(angleVers(W.x - ch.pos[0], W.z - ch.pos[2]), ch.yaw) * Math.min(1, dt * 1.2); else ch.yaw += difAngle(C.lieu.yaw, ch.yaw) * Math.min(1, dt * 4); if (ch.clip !== C.v.clipFinal && !C.unique) jouer(C.v.clipFinal); } }
+  const gel = !!(D && D.ouvert) || (self.HDF_GEL && !self.HDF_DORT);
+  if (C.dlg) { const ang = angleVers(W.x - ch.pos[0], W.z - ch.pos[2]); if (C.etat === 'marche') { if (ch.clip !== 'Idle') ch.play('Idle', { fade: .25 }); ch.player.rate = 1; ch.yaw += difAngle(ang, ch.yaw) * Math.min(1, dt * 5); } else if (C.etat === 'pose' && C.lieu && C.lieu.clip !== 'Sleep_Lie') ch.yaw += difAngle(ang, ch.yaw) * Math.min(1, dt * 4); if (!(D && D.ouvert)) { C.dlg = false; } }
+  else if (C.etat === 'marche') { if (gel) { if (ch.clip !== 'Idle') ch.play('Idle', { fade: .25 }); ch.player.rate = 1; } else marche(dt, dP); } else if (C.etat === 'pose') { ch.player.rate = 1; if (C.lieu) { if (dP < 3 && C.lieu.clip !== 'Sleep_Lie') ch.yaw += difAngle(angleVers(W.x - ch.pos[0], W.z - ch.pos[2]), ch.yaw) * Math.min(1, dt * 1.2); else ch.yaw += difAngle(C.lieu.yaw, ch.yaw) * Math.min(1, dt * 4); if (ch.clip !== C.v.clipFinal && !C.unique) jouer(C.v.clipFinal); } }
 
   // ---------- v0.26 : si elle nous aperçoit la première, elle crie de loin, vient doucement puis parle en face
   { const murC = (x, z) => { const R = self.HDF_COLL || []; for (const r of R) if (x > r.x0 && x < r.x1 && z > r.z0 && z < r.z1 && (r.x1 - r.x0 >= 3 || r.z1 - r.z0 >= 3)) return true; return false; };
@@ -6331,7 +6332,7 @@ self.HDF_CAMILLA = { C, CAM, parler, hub, navPath, LIEUX, dire, creer, heure };
     EX.accR += dm * (EX.jardin / 100) / 600; while (EX.accR >= 1) { EX.accR -= 1; EX.serre = Math.min(4, EX.serre + 1); } });
   // pharmacie : les soins vont dans la trousse
   // ---------- kit à l'écran
-  const kit = document.createElement('div'); kit.style.cssText = 'position:fixed;left:10px;top:calc(var(--st,10px) + 82px);z-index:12;pointer-events:none;font:600 12px system-ui;color:#e8e4da;background:rgba(8,10,14,.55);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:5px 9px;line-height:1.5;display:none'; document.body.appendChild(kit); let kt = 0;
+  const kit = document.createElement('div'); kit.style.cssText = 'position:fixed;left:10px;top:calc(var(--st,10px) + 82px);z-index:12;pointer-events:none;font:600 11px system-ui;max-width:min(182px,calc(100vw - 215px));white-space:normal;color:#e8e4da;background:rgba(8,10,14,.55);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:5px 9px;line-height:1.5;display:none'; document.body.appendChild(kit); let kt = 0;
   A.onUpdate(dt => { if (NY.titre() || (kt -= dt) > 0) { if (NY.titre()) kit.style.display = 'none'; return; } kt = .5; const a = EX.arme ? ARMES[EX.arme].nom.split(' ')[0] + ' ' + EX.mag[EX.arme] + '/' + EX.mun[EX.arme] + (EX.arme === 'm4' ? ' ' + (EX.cad || 'auto') : '') : 'désarmé'; kit.style.display = 'block'; kit.innerHTML = '🍞 ' + rations().length + ' · 💧 ' + bouteilles().length + ' · ✚ ' + EX.soins + '<br>' + a + ' · menace ' + Math.round(EX.menace) + '% · bruit ' + Math.round(EX.bruit) + '%' + (CAM.morte ? '<br>Camilla : décédée' : CAM.part ? '<br>Camilla : partie' : CAM.bless > jourC() ? '<br>Camilla : blessée' : ''); });
   // ---------- aide et jalons
   self.HDF_AIDE = () => { dem('Comment survivre', 'Mange, bois, dors : les besoins baissent en marchant. Rations au garde-manger, eau au point d’eau, lits aux dortoirs. Récupérateur d’eau et serre produisent des vivres (entretiens-les). Tâches du jour : usure et menace. Radio : tuyaux et dangers. Armurerie : M4A1 et Glock. Sas : expéditions. Infirmerie : soins. Camilla : parle-lui, partage tes vivres, protège-la.', [{ t: 'Compris', f: () => self.HDF_BUNKER.pause() }]); };
@@ -6408,7 +6409,7 @@ self.HDF_BUNKER={JEU,test,pause,lire,ecrire,perf:()=>pg,COLL:self.HDF_COLL,reset
 })();
 </script>
 <!--
-NOTE-INTERNE (Claude) · LE BUNKER v0.26 · F.S.M Game House · 4 nov. 2026
+NOTE-INTERNE (Claude) · LE BUNKER v0.28 · F.S.M Game House · 4 nov. 2026
 À lire avant de modifier ce fichier. Ne pas le relire en entier : chercher les ancres « ===== » ou « ==== BUNKER : » (grep), puis ne lire que la section utile.
 
 HISTORIQUE : base = laboratoire isolé de HDF The Life (HDF_Le_Laboratoire_v0_2) → refait en bunker de survivants (v0.4 à v0.20) ; HUD (boussole, dialogue, sous-titres) repris de HDF : CAMPING v0.43 ; fiabilité (JEU, sauvegarde, PerfGuard, pause, auto-test) reprise de CAMPING en v0.20. HDF : INSIDE est un AUTRE jeu : ne pas confondre.
@@ -6457,6 +6458,8 @@ SON v0.21 : moteur sonore repris de Camping (SON WebAudio synthétique, MUS musi
 EVENEMENTS v0.22 : bloc « ÉVÉNEMENTS INTÉRIEURS » après l'intégration son (dans le bloc CAMILLA). N.evt {tens, usure, tNext, coupure, jourU, rJ, eJ, log}. Tension 0-100 (décroît .05/min, >60 érode le moral, >70 → HDF_DANGER = musique danger). Usure +4/jour, raccourcit l'intervalle (150-330 min x (1-usure/220)). Événements : coupure (HDF_COUPURE + HDF_LUMK .16 appliqué dans la boucle de lumières du laboratoire, 25-45 min), fuite (-1 bouteille), bruits, radio, air (énergie/moral), calme. Chaque événement : bandeau + son + réplique de Camilla si < 14 m. Camilla consomme 1 bouteille (9-12 h) et 1 ration (18-21 h) par jour ; stock vide = bandeau + tension. HDF_EVT = {EV, lancer(k), EVENTS} pour tester. A faire : bulles « … », radio réelle, événements extérieurs, réparation active.
 MONDE v0.23 (dans le bloc EV, avant self.HDF_EVT) : N.ext {menace, bonus, arme, mun{m4,g43}, bruit, tempete, annonce, vusR, nSortie, depot}. Radio (POI x30.8 z-9.1) 12 transmissions jamais répétées + émission 1/jour ; Armurerie (32.9,-16.9) M4A1/Glock ; Sas (-32,0) expéditions DEST (pharma, super, ferme, dépôt) avec voile plein écran, butin ajRations/ajEau, risque (arme, tuyau radio, menace, tension, énergie, Camilla -8 pts) ; événements intrus (se cacher / défendre / couper la lumière), survivant (ami/voleur/blessé, écouter la porte), tempête. Camilla : camRisque(p,cause) selon CAM.mode (protegee = jamais de mort ; mortelle ; rigueur x1,5 ; filet de sécurité jours 1-3), CAM.bless/morte/part/exped, départ si conf<8 deux jours. HDF_REL : soirée, nuit voilée (N.adulte = déclaration 18+ dans la pause, jamais explicite). POI : bouton a5 + E/F/✕. Bulle « … » projetée via A.camera. HDF_EXT exposé pour tests.
 VIE v0.24 (bloc EV, avant HDF_EVT) : EX.cuveE/serre/jardin/soins. Récupérateur d'eau (POI au point d'eau, 1 bouteille/4 h x rendement (coupure, usure)), serre (POI 20,12 : 1 ration/10 h x santé, Camilla l'entretient), tâches du jour (POI 1,-1.6 : usure/menace), infirmerie (POI -3,10 : trousses de soins, soigner Camilla), passe(min) = temps + besoins, kit à l'écran (rations, eau, soins, arme, menace, bruit), aide (pause), jalons de jours, sujets de Camilla (monde, armes, sorties, serre, dernier), Camilla en Cargo_Pants. Besoins : faim .1-.2/min, soif .15-.33/min éveillé (gelés pendant le sommeil).
+v0.28 : Camilla s’arrête (clip Idle) et se tourne vers le joueur dès qu’un dialogue/menu s’ouvre ; elle ne marche plus tant que HDF_GEL ou D.ouvert (const gel dans la boucle Camilla).
+v0.27 : HUD kit (rations/eau/arme/menace/bruit) rendu sur 2 lignes, max-width 182px, pour ne plus chevaucher le panneau des besoins sur iPhone/iPad étroit.
 ABORDAGE v0.26 (boucle Camilla, avant « elle ne traverse pas le joueur ») : si CAM.intro===false, elle est éveillée (lieu non Sleep_Lie), dP 5–22 m, joueur dans son cône de vue (>.2) et sans mur COLL entre eux → C.ab {ph crie → approche → face} : elle crie (dire + clip Wave), marche vers le joueur (navPath rafraîchi .6 s, 1,15 puis .8 m/s sous 6 m), s'arrête à 1,9 m, se tourne et lance intro() (variante « Enfin quelqu’un… » si C.abFait). Le dialogue ouvert annule l'approche ; à la fin, C.lieu=null la renvoie à sa place ; C.abCd = 60 s avant un nouvel abordage.
 TIR v0.25 (bloc EV, avant HDF_EVT) : combat en vue subjective. Menu d'intrusion -> combat() : 2-4 intrus Joe (Run / Punch_Jab / Hit_Front / Death) naviguant par navPath vers le joueur, mêlée 12 dmg, tir à distance 7 dmg 45 %. Tir : Espace / bouton TIR / R2 manette ; recharger : R / bouton / □ ; B ou bouton : semi/auto (M4A1). EX.mag{m4:30,g43:12} chargeur, EX.mun réserve. Impact par rayon (tête x2,2 rayon .17 y1.62 ; corps rayon .36 y1.05), murs = COLL rects >=3 m. Fin : HDF_COMBATAPI.finCombat('gagne'|'fuite'), 120 s max, mort -> NY.mourir. Panneaux (planche) double face. Pas de viewmodel d'arme (viseur + flash seulement). Niveaux mesurés (analyseur) : ambiance+musique pic -22,8 dB rms -29,8 ; sfx gain 1,7 depuis v0.25.
 -->
