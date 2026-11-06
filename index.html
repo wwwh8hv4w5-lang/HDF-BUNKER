@@ -1,5 +1,5 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8">
-<title>Le Bunker v0.30</title>
+<title>Le Bunker v0.31</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <style>
 :root{color-scheme:dark;--glass:rgba(8,13,20,.74);--line:rgba(120,170,230,.2);--ink:#e6edf5;--dim:#8ea0b4;--amber:#ffb340;--sl:max(16px,env(safe-area-inset-left,0px));--st:max(12px,env(safe-area-inset-top,0px));--sb:max(12px,env(safe-area-inset-bottom,0px))}
@@ -18,7 +18,7 @@ canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-actio
 .chip{border:1px solid var(--line);background:none;border-radius:6px;padding:9px 14px;color:var(--ink);font:600 14px system-ui}
 </style></head><body>
 <canvas id="c" tabindex="0"></canvas>
-<div id="top" class="gl"><h1>Le <span>Bunker</span></h1><div id="lieu">Sas d’entrée</div><div id="ver" style="font:500 11px system-ui;color:var(--dim)">v0.30</div></div>
+<div id="top" class="gl"><h1>Le <span>Bunker</span></h1><div id="lieu">Sas d’entrée</div><div id="ver" style="font:500 11px system-ui;color:var(--dim)">v0.31</div></div>
 <div id="aide" class="gl">Glisser : regarder · ZQSD / flèches : avancer · Maj : courir · tactile : pouce gauche = avancer</div>
 <div id="stick" hidden><i></i></div>
 <div id="msg" hidden><div><h2>WebGL 2 indisponible</h2><p id="msgt">Ce navigateur ne fournit pas de contexte WebGL 2. Essayez Safari 16+, Chrome, Edge ou Firefox à jour.</p><button id="msgb" class="chip" hidden>Recharger</button></div></div>
@@ -6173,7 +6173,7 @@ self.HDF_CAMILLA = { C, CAM, parler, hub, navPath, LIEUX, dire, creer, heure };
   const lancer = k => { const E = k ? EVENTS.find(e => e.k === k) : null; let e = E; if (!e) { const L = EVENTS.filter(x => x.ok()); let t = L.reduce((a, x) => a + x.p, 0) * Math.random(); e = L.find(x => (t -= x.p) <= 0) || L[0]; } if (!e) return; EV.log.push({ j: jourC(), k: e.k }); if (EV.log.length > 40) EV.log.shift(); e.f(); };
   const mange = (T, setC, sauve, lib, titre) => { if (!T.length) { tens(8); N.mo = Math.max(0, N.mo - 2); BD2('alerte', 'Plus de ' + lib + ' pour Camilla', 'Elle n’a rien à ' + (lib === 'rations' ? 'manger' : 'boire') + '. Les stocks sont vides.'); return; } prendre(T, setC, sauve); BD2('info', titre, 'Il reste ' + T.filter(q => !q.gone).length + ' ' + lib + '.'); };
   A.onUpdate(dt0 => { if (NY.titre() || N.mort || !FA) return; const dt = Math.min(dt0 || .016, .05), jour = jourC(), h = (FA.t / 60) % 24;
-    if (!EV.tPrev) EV.tPrev = FA.t; const dm = Math.max(0, Math.min(60, FA.t - EV.tPrev)); EV.tPrev = FA.t; if (!EV.tNext) EV.tNext = FA.t + rnd(90, 180);
+    if (!EV.tPrev) EV.tPrev = FA.t; const dm = Math.max(0, Math.min(60, FA.t - EV.tPrev)); EV.tPrev = FA.t; if (!EV.tNext) EV.tNext = FA.t + rnd(25, 60);
     if (dm > 0) { EV.tens = Math.max(0, EV.tens - .05 * dm); if (EV.tens > 60) N.mo = Math.max(0, N.mo - .015 * dm); }
     self.HDF_DANGER = EV.tens > 70;
     if (jour > EV.jourU) { if (EV.jourU) EV.usure = Math.min(100, EV.usure + 4); EV.jourU = jour; }
@@ -6183,8 +6183,8 @@ self.HDF_CAMILLA = { C, CAM, parler, hub, navPath, LIEUX, dire, creer, heure };
     if (h >= 9 && h < 12 && EV.eJ !== jour) { EV.eJ = jour; mange(bouteilles(), n => self.HDF_WATER.setCount(n), () => SO.sauve && SO.sauve(), 'bouteilles', 'Camilla a bu'); }
     if (h >= 18 && h < 21 && EV.rJ !== jour) { EV.rJ = jour; mange(rations(), n => self.HDF_FOOD.setCount(n), () => FA.sauve && FA.sauve(), 'rations', 'Camilla a mangé'); }
     if (self.HDF_DORT || (D && D.ouvert) || self.HDF_GEL) return;
-    if (FA.t - EV.tNext > 180) EV.tNext = FA.t + rnd(40, 90);
-    if (FA.t >= EV.tNext) { lancer(); EV.tNext = FA.t + rnd(150, 330) * (1 - EV.usure / 220); } });
+    if (FA.t - EV.tNext > 120) EV.tNext = FA.t + rnd(20, 50);
+    if (FA.t >= EV.tNext) { lancer(); EV.tNext = FA.t + rnd(45, 110) * (1 - EV.usure / 260); } });
   // ===== v0.23 : MONDE EXTÉRIEUR — radio, armes et bruit, intrusions, survivants, tempête, cachette, expéditions, Camilla (blessure / mort / départ), relation =====
   const EX = N.ext = Object.assign({ menace: 20, bonus: 0, arme: null, mun: { m4: 60, g43: 24 }, bruit: 0, tempete: 0, annonce: 0, vusR: [], nSortie: 0, nIntrus: 0, emJ: 0, depot: false, jourM: 0 }, N.ext || {});
   const cl = (x, a = 0, b = 100) => Math.max(a, Math.min(b, x));
@@ -6251,7 +6251,9 @@ self.HDF_CAMILLA = { C, CAM, parler, hub, navPath, LIEUX, dire, creer, heure };
     SON.coup(); setTimeout(() => SON.coup(), 500); BD2('alerte', 'Quelqu’un frappe au sas', 'Trois coups, puis une voix.');
     setTimeout(() => dem('Au sas', 'Trois coups au sas, puis une voix étouffée : « S’il vous plaît… j’ai marché toute la nuit. »', [{ t: 'Ouvrir le sas', f: ouvrir }, { t: 'Écouter à travers la porte', f: ecouter }, { t: 'Ignorer', f: refuser }]), 1400); };
   const tempete = () => { EX.tempete = FA.t + rnd(60, 120); EX.annonce = 0; SON.vent(); tens(8); EV.usure = Math.min(100, EV.usure + 4); BD2('alerte', 'Tempête', 'Le vent s’abat sur le sas. Les expéditions sont impossibles tant qu’elle dure.'); reag(['Ça souffle fort. Heureusement qu’on est ici.']); if (!EV.coupure && Math.random() < .35) lancer('coupure'); };
-  EVENTS.push({ k: 'intrus', p: 2, ok: () => EX.menace >= 25 && jourC() >= 2, f: intrus }, { k: 'survivant', p: 1.5, ok: () => jourC() >= 2, f: survivant }, { k: 'tempete', p: 1.5, ok: () => EX.tempete < FA.t, f: tempete });
+  EVENTS.push({ k: 'intrus', p: 3.5, ok: () => EX.menace >= 12 && FA.t - (jourC() - 1) * 1440 > 660 && !(EX.arme === null && false), f: intrus }, { k: 'survivant', p: 2.5, ok: () => jourC() >= 2 || FA.t % 1440 > 780, f: survivant }, { k: 'tempete', p: 1.5, ok: () => EX.tempete < FA.t, f: tempete },
+    { k: 'rats', p: 2, ok: () => rations().length > 3, f: () => { const T = rations(); prendre(T, n => self.HDF_FOOD.setCount(n), () => FA.sauve && FA.sauve()); tens(7); EV.usure += 1; N.mo = Math.max(0, N.mo - 2); BD2('alerte', 'Rongeurs dans les réserves', 'Quelque chose a éventré une ration · ' + rations().length + ' restante(s).'); reag(['Des rats ! Dans les réserves !', 'Ils ont rongé une ration… il faut boucher ça.']); } },
+    { k: 'cauchemar', p: 1.5, ok: () => true, f: () => { N.mo = Math.max(0, N.mo - 5); tens(8); SON.sinistre && SON.sinistre(); BD2('alerte', 'Un cri dans les couloirs', 'Quelqu’un a crié. Ce n’était peut-être que Camilla… ou le vent dans les gaines.'); reag(['Tu as entendu ? Ça venait de la galerie.', 'Je n’arrive pas à dormir. Ce bunker parle la nuit.']); } });
   // ---------- expéditions
   const DEST = [
     { k: 'pharma', nom: 'Pharmacie du quartier', h: 4, r: 28, R: () => ({ r: 0, e: 1 + Math.floor(Math.random() * 2), s: 20 }) },
@@ -6298,6 +6300,7 @@ self.HDF_CAMILLA = { C, CAM, parler, hub, navPath, LIEUX, dire, creer, heure };
     const mort = !!N.mort, libre = !self.HDF_DORT && !(D && D.ouvert) && !self.HDF_GEL && !mort;
     // jour suivant : la menace monte lentement ; Camilla qui se referme finit par partir
     if (jour > dernierJ) { dernierJ = jour; menace(3 + Math.min(4, jour * .3)); if (CAM.morte || CAM.part) {} else { if (CAM.conf < 8) froid++; else froid = 0; if (froid >= 2 && CAM.mode !== 'protegee' && jour > 3) { CAM.part = jour; const a = retR(1), b = retE(1); if (C.ch) C.ch.visible = false; N.mo = Math.max(0, N.mo - 15); BD2('moment', 'Camilla est partie', 'Elle ne te faisait plus confiance. Elle a emporté ' + a + ' ration et ' + b + ' bouteille.', 'cpart'); } } }
+    if (libre) menace(dt * .02 * (heure() >= 22 || heure() < 5 ? 2 : 1));
     // bruit : course = bruit ; il retombe avec le temps de jeu
     const vJ = Math.hypot(W.x - px, W.z - pz) / Math.max(dt, .001); px = W.x; pz = W.z; if (libre && vJ > 4.2 && vJ < 12) bruit(dt * 4); EX.bruit = Math.max(0, EX.bruit - dt * .8);
     // tempête annoncée / en cours
@@ -6309,6 +6312,9 @@ self.HDF_CAMILLA = { C, CAM, parler, hub, navPath, LIEUX, dire, creer, heure };
     poi = null; if (libre && !C.dlg) { for (const p of POIS) if (Math.hypot(W.x - p.x, W.z - p.z) < p.r) { poi = p; break; } } a5.hidden = !poi; if (poi) { b5.textContent = poi.t + ' (E · ✕)'; a5.style.bottom = self.HDF_CAMCIBLE ? 'calc(var(--sb) + 270px)' : 'calc(var(--sb) + 200px)'; }
     let g = null; try { for (const p of (navigator.getGamepads ? navigator.getGamepads() : [])) if (p && p.buttons) { g = p; break; } } catch (_) {} const q = g && g.buttons[0] && g.buttons[0].pressed ? 1 : 0; if (q && !pad5b && poi && !self.HDF_CAMCIBLE) poiAct(); pad5b = q;
     bulle(); });
+  // v0.31 : VAGUES — l'action ne s'arrête jamais : un assaut toutes les ~100-170 s réelles (plus rapprochés avec les jours), combat direct si armé, sinon menu d'intrusion
+  { let tV = performance.now() + 120000; A.onUpdate(() => { if (NY.titre() || !FA || N.mort) return; const now = performance.now(); if (now < tV) return; const CBa = self.HDF_COMBATAPI && self.HDF_COMBATAPI.CB; if ((D && D.ouvert) || self.HDF_GEL || self.HDF_DORT || (CBa && CBa.on) || EX.tempete > FA.t) { tV = now + 8000; return; }
+      tV = now + (100000 + Math.random() * 70000) * (1 - Math.min(.45, jourC() * .04)); EX.menace = cl(EX.menace + 6); if (EX.arme && self.HDF_COMBATAPI) self.HDF_COMBATAPI.combat(); else intrus(); }); }
   self.HDF_EXT = { EX, RAD, DEST, camRisque, camMort, camBless, intrus, survivant, tempete, sortie, radio, armurerie, sas, resol, ajRations, ajEau, retR, retE, POIS };
   // ===== v0.24 : BOUCLE DE VIE — récupérateur d'eau, serre, entretien, infirmerie, trousse de soins, kit à l'écran, aide, jalons, dialogues de Camilla sur le monde =====
   EX.mag = Object.assign({ m4: 30, g43: 12 }, EX.mag || {}); Object.assign(EX, { cuveE: EX.cuveE || 0, accE: EX.accE || 0, serre: EX.serre || 0, accR: EX.accR || 0, jardin: EX.jardin === undefined ? 70 : EX.jardin, soins: EX.soins === undefined ? 1 : EX.soins, pt: 0, aideVue: !!EX.aideVue });
@@ -6412,7 +6418,7 @@ self.HDF_BUNKER={JEU,test,pause,lire,ecrire,perf:()=>pg,COLL:self.HDF_COLL,reset
 })();
 </script>
 <!--
-NOTE-INTERNE (Claude) · LE BUNKER v0.30 · F.S.M Game House · 4 nov. 2026
+NOTE-INTERNE (Claude) · LE BUNKER v0.31 · F.S.M Game House · 4 nov. 2026
 À lire avant de modifier ce fichier. Ne pas le relire en entier : chercher les ancres « ===== » ou « ==== BUNKER : » (grep), puis ne lire que la section utile.
 
 HISTORIQUE : base = laboratoire isolé de HDF The Life (HDF_Le_Laboratoire_v0_2) → refait en bunker de survivants (v0.4 à v0.20) ; HUD (boussole, dialogue, sous-titres) repris de HDF : CAMPING v0.43 ; fiabilité (JEU, sauvegarde, PerfGuard, pause, auto-test) reprise de CAMPING en v0.20. HDF : INSIDE est un AUTRE jeu : ne pas confondre.
@@ -6461,6 +6467,7 @@ SON v0.21 : moteur sonore repris de Camping (SON WebAudio synthétique, MUS musi
 EVENEMENTS v0.22 : bloc « ÉVÉNEMENTS INTÉRIEURS » après l'intégration son (dans le bloc CAMILLA). N.evt {tens, usure, tNext, coupure, jourU, rJ, eJ, log}. Tension 0-100 (décroît .05/min, >60 érode le moral, >70 → HDF_DANGER = musique danger). Usure +4/jour, raccourcit l'intervalle (150-330 min x (1-usure/220)). Événements : coupure (HDF_COUPURE + HDF_LUMK .16 appliqué dans la boucle de lumières du laboratoire, 25-45 min), fuite (-1 bouteille), bruits, radio, air (énergie/moral), calme. Chaque événement : bandeau + son + réplique de Camilla si < 14 m. Camilla consomme 1 bouteille (9-12 h) et 1 ration (18-21 h) par jour ; stock vide = bandeau + tension. HDF_EVT = {EV, lancer(k), EVENTS} pour tester. A faire : bulles « … », radio réelle, événements extérieurs, réparation active.
 MONDE v0.23 (dans le bloc EV, avant self.HDF_EVT) : N.ext {menace, bonus, arme, mun{m4,g43}, bruit, tempete, annonce, vusR, nSortie, depot}. Radio (POI x30.8 z-9.1) 12 transmissions jamais répétées + émission 1/jour ; Armurerie (32.9,-16.9) M4A1/Glock ; Sas (-32,0) expéditions DEST (pharma, super, ferme, dépôt) avec voile plein écran, butin ajRations/ajEau, risque (arme, tuyau radio, menace, tension, énergie, Camilla -8 pts) ; événements intrus (se cacher / défendre / couper la lumière), survivant (ami/voleur/blessé, écouter la porte), tempête. Camilla : camRisque(p,cause) selon CAM.mode (protegee = jamais de mort ; mortelle ; rigueur x1,5 ; filet de sécurité jours 1-3), CAM.bless/morte/part/exped, départ si conf<8 deux jours. HDF_REL : soirée, nuit voilée (N.adulte = déclaration 18+ dans la pause, jamais explicite). POI : bouton a5 + E/F/✕. Bulle « … » projetée via A.camera. HDF_EXT exposé pour tests.
 VIE v0.24 (bloc EV, avant HDF_EVT) : EX.cuveE/serre/jardin/soins. Récupérateur d'eau (POI au point d'eau, 1 bouteille/4 h x rendement (coupure, usure)), serre (POI 20,12 : 1 ration/10 h x santé, Camilla l'entretient), tâches du jour (POI 1,-1.6 : usure/menace), infirmerie (POI -3,10 : trousses de soins, soigner Camilla), passe(min) = temps + besoins, kit à l'écran (rations, eau, soins, arme, menace, bruit), aide (pause), jalons de jours, sujets de Camilla (monde, armes, sorties, serre, dernier), Camilla en Cargo_Pants. Besoins : faim .1-.2/min, soif .15-.33/min éveillé (gelés pendant le sommeil).
+v0.31 : VAGUES (A.onUpdate avant HDF_EXT : assaut toutes les 100-170 s réelles, combat direct si arme, sinon intrus()) ; RYTHME — événements toutes les 45-110 min de jeu (≈1-2 min réelles) au lieu de 150-330 ; intrusions dès menace 12 (jour 1 après 11 h), survivants/tempêtes plus fréquents, nouveaux événements rats + cri dans les couloirs, menace +.02/s (×2 la nuit).
 v0.30 : une sortie hors abri max toutes les 15 min RÉELLES (EX.sortieReel = Date.now() au départ, sauvegardé ; menu sas verrouillé avec compte à rebours).
 v0.29 : écran « Touche l’écran pour entrer » (#attente, flag attente dans le noyau) après tout rechargement par lancer()/SLOT.changer : le clic débloque SON.init + VOIX.debloquer (iOS exige un geste après reload).
 v0.28 : Camilla s’arrête (clip Idle) et se tourne vers le joueur dès qu’un dialogue/menu s’ouvre ; elle ne marche plus tant que HDF_GEL ou D.ouvert (const gel dans la boucle Camilla).
